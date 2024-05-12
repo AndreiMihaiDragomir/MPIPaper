@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h> // Include the time.h header for clock()
+
+// Function to perform bubble sort
+void bubbleSort(int array[], int n) {
+    int i, j, temp;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (array[j] > array[j + 1]) {
+                // Swap the elements
+                temp = array[j];
+                array[j] = array[j + 1];
+                array[j + 1] = temp;
+            }
+        }
+    }
+}
+
+// Main function to control the program logic
+int main() {
+    clock_t start, end;
+    double cpu_time_used;
+    int *array;
+    int count = 0;
+    int num;
+    FILE *file;
+
+    start = clock(); // Start the timer
+
+    // Open the file for reading
+    file = fopen("numbers.txt", "r");
+    if (file == NULL) {
+        printf("Error opening file\n");
+        return 1;
+    }
+
+    // Read the size of the array
+    fscanf(file, "%d", &count);
+
+    // Allocate memory for the array
+    array = (int *)malloc(count * sizeof(int));
+    if (array == NULL) {
+        printf("Memory allocation failed\n");
+        fclose(file);
+        return 1;
+    }
+
+    // Read the numbers from the file into the array
+    for (int i = 0; i < count; i++) {
+        if (fscanf(file, "%d", &num) != 1) {
+            printf("Error reading number from file\n");
+            free(array);
+            fclose(file);
+            return 1;
+        }
+        array[i] = num;
+    }
+
+    // Close the file
+    fclose(file);
+
+    // Perform the bubble sort on the array
+    bubbleSort(array, count);
+
+    // Free the dynamically allocated memory
+    free(array);
+
+    end = clock(); // Stop the timer
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC; // Calculate the elapsed time
+
+    printf("CPU time used: %f seconds\n", cpu_time_used);
+
+    return 0;
+}
